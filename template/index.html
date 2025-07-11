@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Image Converter</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>AI Image Converter</h1>
+    <form id="uploadForm">
+      <input type="file" id="fileInput" required />
+      <select id="operation">
+        <option value="sketch">Sketch</option>
+        <option value="cartoon">Cartoon</option>
+        <option value="color2bw">Color → B&W</option>
+        <option value="bw2color">B&W → Color</option>
+      </select>
+      <button type="submit">Convert</button>
+    </form>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span id="close">&times;</span>
+      <h2>Processed Image</h2>
+      <img id="outputImage" src="" alt="Output" />
+      <a id="downloadLink" href="#" download>Download Image</a>
+    </div>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
