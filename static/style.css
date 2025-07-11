@@ -1,43 +1,108 @@
 body {
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  background: #0f2027;  /* nice dark gradient */
+  background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+  color: #f0f0f0;
   text-align: center;
+  margin: 0;
 }
 
 .container {
   margin-top: 100px;
+  padding: 20px;
 }
 
-form input,
-form select,
-form button {
-  margin: 10px;
-  padding: 10px;
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+}
+
+form {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  backdrop-filter: blur(10px);
+}
+
+.file-input {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #00c3ff;
+  color: #fff;
+  border-radius: 30px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.file-input input {
+  display: none;
+}
+
+#fileName {
+  margin-left: 10px;
+}
+
+select, button {
+  padding: 12px 20px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 30px;
+  background: #00c3ff;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+select:hover, button:hover {
+  background: #007ea7;
 }
 
 .modal {
   display: none;
   position: fixed;
-  z-index: 1;
-  padding-top: 120px;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.6);
+  z-index: 10;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
 }
 
 .modal-content {
   background: #fff;
-  margin: auto;
+  color: #333;
+  margin: 10% auto;
   padding: 30px;
-  width: 50%;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 600px;
   text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 20px;
 }
 
 #close {
   float: right;
   font-size: 28px;
   cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+a#downloadLink {
+  display: inline-block;
+  background: #00c3ff;
+  padding: 10px 20px;
+  color: #fff;
+  border-radius: 30px;
+  text-decoration: none;
 }

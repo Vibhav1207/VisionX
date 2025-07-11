@@ -1,13 +1,18 @@
 const form = document.getElementById('uploadForm');
+const fileInput = document.getElementById('fileInput');
+const fileName = document.getElementById('fileName');
 const modal = document.getElementById('modal');
 const outputImage = document.getElementById('outputImage');
 const downloadLink = document.getElementById('downloadLink');
 const closeBtn = document.getElementById('close');
 
+fileInput.addEventListener('change', () => {
+  fileName.textContent = fileInput.files[0]?.name || "Choose an image…";
+});
+
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const fileInput = document.getElementById('fileInput');
   const operation = document.getElementById('operation').value;
 
   const formData = new FormData();
@@ -31,7 +36,6 @@ form.addEventListener('submit', async (e) => {
 closeBtn.onclick = function () {
   modal.style.display = 'none';
 };
-
 window.onclick = function (event) {
   if (event.target == modal) {
     modal.style.display = 'none';

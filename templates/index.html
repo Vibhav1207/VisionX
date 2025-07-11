@@ -2,25 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>AI Image Converter</title>
+  <title>VisionX Image Converter</title>
   <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>AI Image Converter</h1>
+    <h1>VisionX AI Image Converter</h1>
     <form id="uploadForm">
-      <input type="file" id="fileInput" required />
+      <label class="file-input">
+        <input type="file" id="fileInput" required />
+        <span id="fileName">Choose an image…</span>
+      </label>
       <select id="operation">
         <option value="sketch">Sketch</option>
         <option value="cartoon">Cartoon</option>
         <option value="color2bw">Color → B&W</option>
         <option value="bw2color">B&W → Color</option>
       </select>
-      <button type="submit">Convert</button>
+      <button type="submit">Convert Image</button>
     </form>
   </div>
 
-  <!-- Modal -->
   <div id="modal" class="modal">
     <div class="modal-content">
       <span id="close">&times;</span>

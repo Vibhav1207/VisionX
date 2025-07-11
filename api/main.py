@@ -39,16 +39,30 @@ async def process_image(
         sketch = cv2.divide(gray, 255 - blur, scale=256)
         output = cv2.cvtColor(sketch, cv2.COLOR_GRAY2BGR)
 
-    elif operation == "cartoon":
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        gray = cv2.medianBlur(gray, 5)
-        edges = cv2.adaptiveThreshold(gray, 255,
-                                      cv2.ADAPTIVE_THRESH_MEAN_C,
-                                      cv2.THRESH_BINARY, 9, 9)
-        color = cv2.bilateralFilter(img, 9, 300, 300)
-        cartoon = cv2.bitwise_and(color, color, mask=edges)
-        output = cartoon
+   elif operation == "cartoon":
+    num_down = 2  # downsample steps
+    num_bilateral = 7  # number of bilateral filtering steps
 
+    img_color = img
+    for _ in range(num_down):
+        img_color = cv2.pyrDown(img_color)
+
+    for _ in range(num_bilateral):
+        img_color = cv2.bilateralFilter(img_color, d=9, sigmaColor=9, sigmaSpace=7)
+
+    for _ in range(num_down):
+        img_color = cv2.pyrUp(img_color)
+
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img_blur = cv2.medianBlur(img_gray, 7)
+    img_edge = cv2.adaptiveThreshold(img_blur, 255,
+                                     cv2.ADAPTIVE_THRESH_MEAN_C,
+                                     cv2.THRESH_BINARY,
+                                     blockSize=9,
+                                     C=2)
+
+    img_edge = cv2.cvtColor(img_edge, cv2.COLOR_GRAY2BGR)
+    output = cv2.bitwise_and(img_color, img_edge)
     elif operation == "color2bw":
         output = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         output = cv2.cvtColor(output, cv2.COLOR_GRAY2BGR)
