@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>✨ VisionX - AI Image Transformer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🧠✨ VisionX</h1>
+    <p>Transform your photos with AI in one click!</p>
+
+    <form action="/process" method="post" enctype="multipart/form-data">
+      <label class="upload-label">
+        Select Image:
+        <input type="file" name="file" required>
+      </label>
+
+      <label class="select-label">
+        Choose Effect:
+        <select name="effect">
+          <option value="bw">Black & White</option>
+          <option value="colorize">Fake Colorize</option>
+          <option value="cartoon">Cartoonify</option>
+          <option value="sketch">Pencil Sketch</option>
+          <option value="night">Day to Night</option>
+        </select>
+      </label>
+
+      <button type="submit" class="button">🚀 Apply Effect</button>
+    </form>
+
+    <footer>Made with ❤️ using FastAPI & OpenCV</footer>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
