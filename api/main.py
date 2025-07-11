@@ -19,11 +19,9 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "..", "templates"))
 
-
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
-
 
 @app.post("/process/")
 async def process_image(
@@ -56,7 +54,7 @@ async def process_image(
         output = cv2.cvtColor(output, cv2.COLOR_GRAY2BGR)
 
     elif operation == "bw2color":
-        # Fake colorization: Apply a heatmap color map for demo
+        # Fake colorization with heatmap for demo
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         colorized = cv2.applyColorMap(gray, cv2.COLORMAP_JET)
         output = colorized
