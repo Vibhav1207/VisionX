@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>VisionX Image Converter</title>
   <link rel="stylesheet" href="/static/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body>
   <div class="container">
@@ -20,7 +21,18 @@
       <button type="submit">Convert</button>
     </form>
     <p id="fileName">No file chosen</p>
-    <p id="result"></p>
+
+    {% if output_url %}
+    <div class="output">
+      <h2>Result:</h2>
+      <img src="{{ output_url }}" alt="Converted Image" />
+      <br />
+      <a href="{{ output_url }}" download class="download-btn">
+        <button>Download Image</button>
+      </a>
+    </div>
+    {% endif %}
+
   </div>
   <script>
     const fileInput = document.getElementById("fileInput");
