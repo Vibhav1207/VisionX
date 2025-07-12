@@ -4,11 +4,14 @@
   <meta charset="UTF-8" />
   <title>VisionX Image Converter</title>
   <link rel="stylesheet" href="/static/style.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 <body>
   <div class="container">
     <h1>🎨 VisionX Image Converter</h1>
+    {% if error %}
+      <p style="color: red;">{{ error }}</p>
+    {% endif %}
     <form id="uploadForm" action="/process/" enctype="multipart/form-data" method="post">
       <input type="file" name="file" id="fileInput" accept="image/*" required />
       <label for="operation">Choose Operation:</label>
@@ -20,20 +23,21 @@
       </select>
       <button type="submit">Convert</button>
     </form>
+
     <p id="fileName">No file chosen</p>
 
     {% if output_url %}
-    <div class="output">
-      <h2>Result:</h2>
-      <img src="{{ output_url }}" alt="Converted Image" />
-      <br />
-      <a href="{{ output_url }}" download class="download-btn">
-        <button>Download Image</button>
-      </a>
-    </div>
+      <div class="output">
+        <h2>Converted Image:</h2>
+        <img src="{{ output_url }}" alt="Converted Image" />
+        <br />
+        <a href="{{ output_url }}" download>
+          <button class="download-btn">Download Image</button>
+        </a>
+      </div>
     {% endif %}
-
   </div>
+
   <script>
     const fileInput = document.getElementById("fileInput");
     const fileName = document.getElementById("fileName");
