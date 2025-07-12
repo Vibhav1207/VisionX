@@ -65,7 +65,7 @@ async def process_image(
         output = cv2.cvtColor(output, cv2.COLOR_GRAY2BGR)
 
     elif operation == "bw2color":
-        # ✅ Safe check for channel count
+    
         if len(img.shape) == 2 or img.shape[2] == 1:
             output = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
         else:
