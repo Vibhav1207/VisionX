@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>VisionX | Sketch & Cartoon</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 Image Converter</h1>
+    <form action="/process/" enctype="multipart/form-data" method="post">
+      <label>Select an image:</label>
+      <input type="file" name="file" required />
+
+      <label>Choose style:</label>
+      <select name="operation">
+        <option value="sketch">Sketch</option>
+        <option value="cartoon">Cartoon</option>
+      </select>
+
+      <button type="submit">Convert</button>
+    </form>
+
+    {% if output_url %}
+    <div class="output">
+      <h2>Result:</h2>
+      <img src="{{ output_url }}" alt="Output Image" />
+      <a href="{{ output_url }}" download>
+        <button class="download-btn">Download</button>
+      </a>
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>
