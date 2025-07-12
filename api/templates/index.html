@@ -19,9 +19,39 @@
       </select>
       <button type="submit">Convert</button>
     </form>
+    <div id="output-area" style="display:none;">
+  <h3>Output:</h3>
+  <img id="output-img" style="max-width:400px;">
+  <br>
+  <a id="download-btn" href="#" download>Download</a>
+</div>
     <p id="fileName">No file chosen</p>
     <p id="result"></p>
   </div>
+  <script>
+  const form = document.getElementById('upload-form');
+  const outputArea = document.getElementById('output-area');
+  const outputImg = document.getElementById('output-img');
+  const downloadBtn = document.getElementById('download-btn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const response = await fetch('/process/', {
+      method: 'POST',
+      body: formData
+    });
+    if (response.ok) {
+      const blob = await response.blob();
+      const imageURL = URL.createObjectURL(blob);
+      outputImg.src = imageURL;
+      downloadBtn.href = imageURL;
+      outputArea.style.display = 'block';
+    } else {
+      alert('Error processing image.');
+    }
+  });
+</script>
   <script>
     const fileInput = document.getElementById("fileInput");
     const fileName = document.getElementById("fileName");

@@ -64,6 +64,10 @@ async def process_image(
 
     else:
         return {"error": "Invalid operation"}
+    
+    output_path = "output/result.jpg"
+    cv2.imwrite(output_path, output)
+    return FileResponse(output_path, media_type="image/jpeg")
 
     cv2.imwrite(OUTPUT_PATH, output)
     return FileResponse(OUTPUT_PATH, media_type="image/jpeg", filename="output.jpg")
