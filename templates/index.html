@@ -1,34 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>VisionX | Sketch & Cartoon</title>
-  <link rel="stylesheet" href="/static/style.css" />
+  <title>VisionX</title>
+  <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
   <div class="container">
-    <h1>🎨 Image Converter</h1>
-    <form action="/process/" enctype="multipart/form-data" method="post">
-      <label>Select an image:</label>
-      <input type="file" name="file" required />
-
-      <label>Choose style:</label>
-      <select name="operation">
+    <h1>Image Converter</h1>
+    <form action="/process/" method="post" enctype="multipart/form-data">
+      <input type="file" name="file" required>
+      <select name="operation" required>
         <option value="sketch">Sketch</option>
         <option value="cartoon">Cartoon</option>
       </select>
-
       <button type="submit">Convert</button>
     </form>
 
     {% if output_url %}
-    <div class="output">
-      <h2>Result:</h2>
-      <img src="{{ output_url }}" alt="Output Image" />
-      <a href="{{ output_url }}" download>
-        <button class="download-btn">Download</button>
-      </a>
-    </div>
+      <div class="output">
+        <h2>Output</h2>
+        <img src="{{ output_url }}" alt="Output Image">
+        <div>
+          <a href="{{ output_url }}" download>
+            <button class="download-btn">Download</button>
+          </a>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if error %}
+      <p style="color: red;">{{ error }}</p>
     {% endif %}
   </div>
 </body>

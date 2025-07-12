@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request, Form, UploadFile, File
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -10,11 +10,12 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "..", "static")
-TEMPLATE_DIR = os.path.join(BASE_DIR, "..", "templates")
+TEMPLATES_DIR = os.path.join(BASE_DIR, "..", "templates")
 
 app = FastAPI()
+
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
-templates = Jinja2Templates(directory=TEMPLATE_DIR)
+templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 OUTPUT_DIR = os.path.join(STATIC_DIR, "outputs")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -35,32 +36,37 @@ async def process_image(
     nparr = np.frombuffer(contents, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
+    if img is None:
+        return templates.TemplateResponse(
+            "index.html",
+            {"request": request, "error": "Invalid image uploaded."}
+        )
+
     if operation == "sketch":
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         inv = 255 - gray
         blur = cv2.GaussianBlur(inv, (21, 21), 0)
-        sketch = cv2.divide(gray, 255 - blur, scale=256.0)
-        result = cv2.cvtColor(sketch, cv2.COLOR_GRAY2BGR)
-
+        sketch = cv2.divide(gray, 255 - blur, scale=256)
+        output_img = cv2.cvtColor(sketch, cv2.COLOR_GRAY2BGR)
     elif operation == "cartoon":
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         gray = cv2.medianBlur(gray, 5)
         edges = cv2.adaptiveThreshold(
-            gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C,
+            gray, 255,
+            cv2.ADAPTIVE_THRESH_MEAN_C,
             cv2.THRESH_BINARY, 9, 9
         )
-        color = cv2.bilateralFilter(img, 9, 250, 250)
-        result = cv2.bitwise_and(color, color, mask=edges)
-
+        color = cv2.bilateralFilter(img, 9, 300, 300)
+        cartoon = cv2.bitwise_and(color, color, mask=edges)
+        output_img = cartoon
     else:
-        result = img
+        output_img = img  # Fallback: do nothing
 
-    filename = f"{uuid.uuid4().hex}.jpg"
+    filename = f"{uuid.uuid4().hex}.png"
     output_path = os.path.join(OUTPUT_DIR, filename)
-    cv2.imwrite(output_path, result)
+    cv2.imwrite(output_path, output_img)
 
     output_url = f"/static/outputs/{filename}"
-
     return templates.TemplateResponse(
         "index.html",
         {"request": request, "output_url": output_url}
