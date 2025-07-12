@@ -10,19 +10,19 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
-OUTPUTS_DIR = os.path.join(STATIC_DIR, "outputs")
-
-# Ensure output dir exists
-os.makedirs(OUTPUTS_DIR, exist_ok=True)
 
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
+OUTPUT_PATH = os.path.join(BASE_DIR, "static", "output.jpg")
+
+
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "output_url": None})
+    return templates.TemplateResponse("index.html", {"request": request})
+
 
 @app.post("/process/", response_class=HTMLResponse)
 async def process_image(
@@ -33,12 +33,6 @@ async def process_image(
     contents = await file.read()
     nparr = np.frombuffer(contents, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-    if img is None:
-        return templates.TemplateResponse(
-            "index.html",
-            {"request": request, "output_url": None, "error": "Could not read the uploaded image."}
-        )
 
     if operation == "sketch":
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -54,7 +48,8 @@ async def process_image(
         edges = cv2.adaptiveThreshold(
             gray, 255,
             cv2.ADAPTIVE_THRESH_MEAN_C,
-            cv2.THRESH_BINARY, 9, 9
+            cv2.THRESH_BINARY,
+            9, 9
         )
         color = cv2.bilateralFilter(img, 9, 300, 300)
         edges = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)
@@ -65,28 +60,24 @@ async def process_image(
         output = cv2.cvtColor(output, cv2.COLOR_GRAY2BGR)
 
     elif operation == "bw2color":
-    
         if len(img.shape) == 2 or img.shape[2] == 1:
             output = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
         else:
-            output = img.copy()
+            output = img
 
     else:
-        return templates.TemplateResponse(
-            "index.html",
-            {"request": request, "output_url": None, "error": "Invalid operation"}
-        )
+        return templates.TemplateResponse("index.html", {
+            "request": request,
+            "error": "Invalid operation!"
+        })
 
-    output_filename = f"output_{file.filename}"
-    output_path = os.path.join(OUTPUTS_DIR, output_filename)
-    cv2.imwrite(output_path, output)
+    cv2.imwrite(OUTPUT_PATH, output)
 
-    output_url = f"/static/outputs/{output_filename}"
-
-    return templates.TemplateResponse(
-        "index.html",
-        {"request": request, "output_url": output_url, "error": None}
-    )
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "output_url": "/static/output.jpg",
+        "selected_operation": operation
+    })
 
 
 if __name__ == "__main__":
