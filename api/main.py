@@ -1,27 +1,25 @@
-from fastapi import FastAPI, Request, Form, UploadFile, File
-from fastapi.responses import RedirectResponse
+from fastapi import FastAPI, Request, UploadFile, Form
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-
-import cv2
+import uvicorn
 import numpy as np
-import uuid
+import cv2
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_DIR = os.path.join(BASE_DIR, "..", "static")
-TEMPLATES_DIR = os.path.join(BASE_DIR, "..", "templates")
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
-OUTPUT_DIR = os.path.join(STATIC_DIR, "outputs")
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+OUTPUT_PATH = os.path.join(BASE_DIR, "output.jpg")
 
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
@@ -29,45 +27,47 @@ async def home(request: Request):
 @app.post("/process/")
 async def process_image(
     request: Request,
-    file: UploadFile = File(...),
+    file: UploadFile,
     operation: str = Form(...)
 ):
     contents = await file.read()
     nparr = np.frombuffer(contents, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-    if img is None:
-        return templates.TemplateResponse(
-            "index.html",
-            {"request": request, "error": "Invalid image uploaded."}
-        )
-
     if operation == "sketch":
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         inv = 255 - gray
         blur = cv2.GaussianBlur(inv, (21, 21), 0)
-        sketch = cv2.divide(gray, 255 - blur, scale=256)
-        output_img = cv2.cvtColor(sketch, cv2.COLOR_GRAY2BGR)
+        inv_blur = 255 - blur
+        sketch = cv2.divide(gray, inv_blur, scale=256.0)
+        output = cv2.cvtColor(sketch, cv2.COLOR_GRAY2BGR)
+
     elif operation == "cartoon":
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         gray = cv2.medianBlur(gray, 5)
         edges = cv2.adaptiveThreshold(
             gray, 255,
             cv2.ADAPTIVE_THRESH_MEAN_C,
-            cv2.THRESH_BINARY, 9, 9
+            cv2.THRESH_BINARY,
+            9, 9
         )
         color = cv2.bilateralFilter(img, 9, 300, 300)
-        cartoon = cv2.bitwise_and(color, color, mask=edges)
-        output_img = cartoon
+        edges = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)
+        output = cv2.bitwise_and(color, edges)
+
+    elif operation == "color2bw":
+        output = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        output = cv2.cvtColor(output, cv2.COLOR_GRAY2BGR)
+
+    elif operation == "bw2color":
+        output = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+
     else:
-        output_img = img  # Fallback: do nothing
+        return {"error": "Invalid operation"}
 
-    filename = f"{uuid.uuid4().hex}.png"
-    output_path = os.path.join(OUTPUT_DIR, filename)
-    cv2.imwrite(output_path, output_img)
+    cv2.imwrite(OUTPUT_PATH, output)
+    return FileResponse(OUTPUT_PATH, media_type="image/jpeg", filename="output.jpg")
 
-    output_url = f"/static/outputs/{filename}"
-    return templates.TemplateResponse(
-        "index.html",
-        {"request": request, "output_url": output_url}
-    )
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
