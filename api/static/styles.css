@@ -1,88 +1,87 @@
 body {
   background: #121212;
   color: #fff;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: Arial, sans-serif;
   text-align: center;
-  padding: 20px;
-  margin: 0;
+  padding: 50px;
 }
 
 .container {
   background: #1e1e1e;
-  padding: 30px 20px;
-  border-radius: 10px;
+  padding: 30px;
+  border-radius: 8px;
   display: inline-block;
-  max-width: 95%;
-  width: 400px;
-  box-shadow: 0 0 15px rgba(0, 195, 255, 0.2);
-}
-
-h1 {
-  font-size: 1.8em;
-  margin-bottom: 20px;
 }
 
 input[type="file"],
 select {
-  margin: 10px 0;
-  width: 100%;
-  max-width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
+  margin: 10px;
 }
 
 button {
   background: #00c3ff;
   color: #fff;
+  border: none;body {
+  font-family: Arial, sans-serif;
+  background: #f1f5f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  background: #fff;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+h1 {
+  color: #333;
+}
+
+input[type="file"],
+select {
+  margin: 15px 0;
+  padding: 8px;
+}
+
+button {
+  padding: 10px 20px;
+  background: #0077ff;
+  color: white;
   border: none;
-  padding: 12px 25px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #005dc1;
+}
+
+#fileName {
+  margin-top: 10px;
+  color: #555;
+}
+
+  padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
-  width: 100%;
-  margin-top: 15px;
 }
 
 button:hover {
   background: #00aacc;
-  transform: scale(1.02);
-}
-
-#fileName {
-  margin: 10px 0;
-  word-break: break-all;
-  font-size: 0.9em;
-  color: #ccc;
 }
 
 .output img {
-  max-width: 100%;
+  max-width: 500px;
   margin-top: 20px;
   border: 3px solid #00c3ff;
-  border-radius: 8px;
+  border-radius: 5px;
 }
 
 .download-btn {
-  display: inline-block;
-  margin-top: 15px;
-}
-
-.download-btn button {
-  width: auto;
-}
-
-@media (max-width: 480px) {
-  body {
-    padding: 10px;
-  }
-
-  .container {
-    width: 100%;
-    padding: 20px 15px;
-  }
-
-  h1 {
-    font-size: 1.5em;
-  }
+  margin-top: 10px;
 }
