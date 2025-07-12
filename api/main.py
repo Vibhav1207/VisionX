@@ -60,10 +60,8 @@ async def process_image(
         output = cv2.cvtColor(output, cv2.COLOR_GRAY2BGR)
 
     elif operation == "bw2color":
-        if len(img.shape) == 2 or img.shape[2] == 1:
-            output = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
-        else:
-            output = img
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        output = cv2.applyColorMap(gray, cv2.COLORMAP_JET)
 
     else:
         return templates.TemplateResponse("index.html", {
